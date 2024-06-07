@@ -34,7 +34,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Downloader} from './Downloader';
 import CreateOfflineRegion from './CreateOfflineRegion';
 import MapWithDraw from './MapWithDraw';
-
+const key = '';
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -71,9 +71,7 @@ const Tab = createBottomTabNavigator();
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
-  MapboxGL.setAccessToken(
-    'sk.eyJ1IjoiYWlkYXNoLWl2bXMiLCJhIjoiY2t0czdqZHF2MDlnejJubzN4bWNtYzZlNSJ9.1-p0jStVtYZGJBERkmzyRA',
-  );
+  MapboxGL.setAccessToken(key);
 
   useEffect(() => {
     MapboxGL.setTelemetryEnabled(false);
