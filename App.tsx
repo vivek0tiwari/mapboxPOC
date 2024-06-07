@@ -5,8 +5,11 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
+import MapboxGL from '@rnmapbox/maps';
+import {Dimensions} from 'react-native';
+
 import {
   SafeAreaView,
   ScrollView,
@@ -24,6 +27,13 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import StyleJson from './StyleJson';
+import OfflineExample from './CreateOfflineRegion';
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {Downloader} from './Downloader';
+import CreateOfflineRegion from './CreateOfflineRegion';
+import MapWithDraw from './MapWithDraw';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -55,44 +65,32 @@ function Section({children, title}: SectionProps): React.JSX.Element {
   );
 }
 
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+const Tab = createBottomTabNavigator();
+
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  MapboxGL.setAccessToken(
+    'sk.eyJ1IjoiYWlkYXNoLWl2bXMiLCJhIjoiY2t0czdqZHF2MDlnejJubzN4bWNtYzZlNSJ9.1-p0jStVtYZGJBERkmzyRA',
+  );
+
+  useEffect(() => {
+    MapboxGL.setTelemetryEnabled(false);
+  }, []);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen name="Map" component={StyleJson} />
+        <Tab.Screen name="Downloader" component={Downloader} />
+        <Tab.Screen name="Offline" component={CreateOfflineRegion} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
@@ -112,6 +110,17 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  page: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    height: screenHeight - 40,
+    width: screenWidth - 10,
+  },
+  map: {
+    flex: 1,
   },
 });
 
